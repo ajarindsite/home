@@ -6,9 +6,10 @@
     <title>Adjarin Kreatif Semesta - Bimtek Guru & Pendampingan Pembuatan Web</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
     
     <script>
         tailwind.config = {
@@ -16,6 +17,7 @@
                 extend: {
                     fontFamily: {
                         sans: ['Poppins', 'sans-serif'],
+                        inter: ['Inter', 'sans-serif'],
                     },
                     colors: {
                         'brand-dark': '#060d08',
@@ -24,7 +26,9 @@
                         'brand-green-end': '#22c55e',
                         'brand-orange-start': '#f97316',
                         'brand-orange-end': '#fbbf24',
-                        'brand-wa': '#25D366'
+                        'brand-wa': '#25D366',
+                        'editor-blue': '#0a1628',
+                        'editor-box': '#0f1d2e'
                     }
                 }
             }
@@ -53,58 +57,314 @@
             background: linear-gradient(to right, #4ade80, #2dd4bf);
         }
         /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #060d08;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #22c55e;
-            border-radius: 4px;
-        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #060d08; }
+        ::-webkit-scrollbar-thumb { background: #22c55e; border-radius: 4px; }
+
         /* Infinite Marquee Animation for SaaS Showcase */
-        @keyframes marquee {
-            0% { transform: translateX(0%); }
-            100% { transform: translateX(-50%); }
+        @keyframes marquee { 0% { transform: translateX(0%); } 100% { transform: translateX(-50%); } }
+        .animate-marquee { display: flex; width: max-content; animation: marquee 30s linear infinite; }
+        .animate-marquee:hover { animation-play-state: paused; }
+
+        /* Style Tambahan untuk Menu 11 Materi Guru */
+        .code-block { background:#0f1d2e; color:#d4d4d4; border-radius:12px; overflow:hidden; border:1px solid #1a3352 }
+        .code-block pre { padding:1rem; overflow-x:auto; font-size:.72rem; line-height:1.65; font-family:'Courier New',monospace; margin:0; white-space:pre }
+        .code-header { background:#132340; padding:.5rem 1rem; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #1a3352 }
+        .code-header span { color:#4ade80; font-size:.72rem }
+        .copy-btn { background:#1a3352; color:#4ade80; border:none; padding:3px 10px; border-radius:6px; font-size:.68rem; cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:4px }
+        .copy-btn:hover { background:#22c55e; color:#0a1628 }
+        .card-h { transition:all .3s ease }.card-h:hover{ transform:translateY(-4px); box-shadow:0 20px 40px -12px rgba(34,197,94,.2) }
+        .acc-c { max-height:0; overflow:hidden; transition:max-height .5s ease }.acc-c.open{ max-height:5000px }
+        .glass { background:rgba(15,34,64,.6); backdrop-filter:blur(12px); border:1px solid rgba(34,197,94,.15) }
+        .glow-green { box-shadow:0 0 30px rgba(34,197,94,.15) }
+        .glow-orange { box-shadow:0 0 20px rgba(249,115,22,.2) }
+        .toast-popup { position:fixed; bottom:2rem; right:2rem; background:#22c55e; color:#0a1628; padding:10px 20px; border-radius:10px; font-size:.82rem; z-index:9999; transform:translateY(100px); opacity:0; transition:all .3s ease; font-weight:500 }
+        .toast-popup.show { transform:translateY(0); opacity:1 }
+        .article-content p { margin-bottom: 1rem; color: #cbd5e1; line-height: 1.7; }
+
+        /* Gallery Styles */
+        .gallery-image {
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
         }
-        .animate-marquee {
+        .gallery-item:hover .gallery-image {
+            transform: scale(1.05);
+        }
+        .category-tab {
+            transition: all 0.2s ease;
+        }
+        .category-tab.active {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border-color: transparent;
+        }
+        .gallery-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        .gallery-modal.active {
             display: flex;
-            width: max-content;
-            animation: marquee 30s linear infinite;
         }
-        .animate-marquee:hover {
-            animation-play-state: paused;
+        .gallery-modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            cursor: default;
         }
-        /* Page/Modal content styling */
-        .article-content p {
-            margin-bottom: 1rem;
-            color: #cbd5e1;
-            line-height: 1.7;
+        .gallery-modal-content img {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 1rem;
+        }
+        .gallery-toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #10b981;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+            z-index: 1001;
+        }
+        .gallery-toast.show {
+            transform: translateX(0);
+        }
+        .loading-spinner {
+            border: 3px solid rgba(16, 185, 129, 0.3);
+            border-top: 3px solid #10b981;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
-<body class="font-sans antialiased">
+<body class="font-sans antialiased text-white">
+
+    <div id="toast" class="toast-popup">✓ Kode berhasil disalin!</div>
+    <div id="gallery-toast" class="gallery-toast">
+        <i class="fas fa-check-circle mr-2"></i>
+        <span id="gallery-toast-message">Berhasil!</span>
+    </div>
+
+    <!-- Gallery Modal -->
+    <div id="gallery-modal" class="gallery-modal">
+        <div class="gallery-modal-content relative">
+            <button onclick="closeGalleryModal()" class="absolute -top-10 right-0 text-white text-3xl hover:text-green-400">&times;</button>
+            <img id="modal-image" src="" alt="Preview">
+        </div>
+    </div>
 
     <script>
-        // =========================================================================
-        // SILAHKAN UBAH VARIABEL DI BAWAH INI SECARA MANUAL UNTUK SINKRONISASI ANDA
-        // =========================================================================
-        const GOOGLE_SHEET_ID = "1XYZ-YOUR-SHEET-ID-HERE"; // Masukkan ID Spreadsheets Anda
-        
-        // Base URL untuk Aset Fisik Gambar di Github Anda (Otomatis digabung JavaScript)
+        const GOOGLE_SHEET_ID = "1XYZ-YOUR-SHEET-ID-HERE"; // Ganti dengan ID Spreadsheet Anda
         const GITHUB_IMAGE_BASE = "https://raw.githubusercontent.com/USERNAME/REPO_NAME/main/assets/images/";
         
-        // Objek Tautan / Links Management (Pusat Kendali URL Dummy & Eksternal)
         const LINK_CONFIG = {
             demoAppEvaluasi: "https://demo.adjarind.web.id/evaluasi",
             demoAbsensiDigital: "https://demo.adjarind.web.id/absensi",
             demoDashboardKelola: "https://demo.adjarind.web.id/dashboard",
             penerbitEksternal: "https://jpcreative.web.id",
             joinNowCTA: "#hubungi-kami",
-            whatsappNumber: "6285710908070", // Nomor WA Resmi (Format Kode Negara tanpa '+')
+            whatsappNumber: "6285710908070",
             companyEmail: "admajar@jpcrtv.my.id"
         };
+
+        // Gallery Data
+        let galleryData = [];
+        let currentGalleryFilter = "all";
+
+        // Gallery Functions
+        function showGalleryToast(message) {
+            const toast = document.getElementById('gallery-toast');
+            const toastMsg = document.getElementById('gallery-toast-message');
+            toastMsg.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        function openGalleryModal(imageSrc, title) {
+            const modal = document.getElementById('gallery-modal');
+            const modalImg = document.getElementById('modal-image');
+            modalImg.src = imageSrc;
+            modalImg.alt = title;
+            modal.classList.add('active');
+        }
+
+        function closeGalleryModal() {
+            const modal = document.getElementById('gallery-modal');
+            modal.classList.remove('active');
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeGalleryModal();
+        });
+
+        function filterGallery(category) {
+            currentGalleryFilter = category;
+            
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.getAttribute('data-cat') === category) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            renderGallery();
+        }
+
+        function renderGallery() {
+            const grid = document.getElementById('gallery-grid');
+            if (!grid) return;
+            
+            const filtered = currentGalleryFilter === 'all' 
+                ? galleryData 
+                : galleryData.filter(item => item.category === currentGalleryFilter);
+            
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <i class="fas fa-folder-open text-5xl text-gray-600 mb-4"></i>
+                        <p class="text-gray-400">Belum ada konten untuk kategori ini</p>
+                        <p class="text-sm text-gray-500 mt-2">Silakan tambahkan data di Google Sheets</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = filtered.map(item => {
+                const imageUrl = item.image.startsWith('http') ? item.image : GITHUB_IMAGE_BASE + item.image;
+                
+                if (item.isVideo || item.category === 'video') {
+                    return `
+                        <div class="bg-emerald-950/10 border border-emerald-900/30 rounded-2xl overflow-hidden group hover:border-emerald-500/30 transition-all">
+                            <div class="relative bg-black h-48">
+                                <iframe 
+                                    src="${item.videoUrl || 'https://www.youtube.com/embed/dQw4w9WgXcQ'}" 
+                                    class="w-full h-full object-cover"
+                                    frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowfullscreen>
+                                </iframe>
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-semibold text-lg mb-2">${escapeHtml(item.title)}</h3>
+                                <p class="text-gray-400 text-sm">${escapeHtml(item.description)}</p>
+                                <div class="mt-3">
+                                    <span class="text-xs text-emerald-400"><i class="fas fa-video mr-1"></i>Video Demo</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                return `
+                    <div class="bg-emerald-950/10 border border-emerald-900/30 rounded-2xl overflow-hidden group cursor-pointer hover:border-emerald-500/30 transition-all" onclick="openGalleryModal('${imageUrl}', '${escapeHtml(item.title)}')">
+                        <div class="overflow-hidden h-48">
+                            <img src="${imageUrl}" alt="${escapeHtml(item.title)}" class="gallery-image w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://via.placeholder.com/400x300?text=Image+Not+Found'">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-semibold text-lg mb-2">${escapeHtml(item.title)}</h3>
+                            <p class="text-gray-400 text-sm">${escapeHtml(item.description)}</p>
+                            <div class="mt-3">
+                                <span class="text-xs text-emerald-400"><i class="fas fa-expand-alt mr-1"></i>Klik untuk perbesar</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        async function fetchGalleryFromSheets() {
+            const loadingState = document.getElementById('gallery-loading-state');
+            const grid = document.getElementById('gallery-grid');
+            
+            if (loadingState) loadingState.classList.remove('hidden');
+            if (grid) grid.classList.add('hidden');
+            
+            const spreadSheetUrl = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:json`;
+            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(spreadSheetUrl)}`;
+
+            try {
+                const response = await fetch(proxyUrl);
+                const text = await response.text();
+                const jsonStr = text.substring(47, text.length - 2);
+                const data = JSON.parse(jsonStr);
+                const rows = data.table.rows;
+                
+                const dataRows = rows.slice(1);
+                
+                galleryData = dataRows.map(row => {
+                    const cells = row.c || [];
+                    return {
+                        category: cells[0]?.v || "app",
+                        title: cells[1]?.v || "Untitled",
+                        description: cells[2]?.v || "No description",
+                        image: cells[3]?.v || "placeholder.jpg",
+                        isVideo: cells[4]?.v === "yes" || false,
+                        videoUrl: cells[5]?.v || null
+                    };
+                }).filter(item => item.title !== "Untitled" && item.image);
+                
+                if (galleryData.length === 0) {
+                    galleryData = [
+                        { category: "app", title: "Web App Adjarind - Dashboard", description: "Tampilan dashboard admin aplikasi LMS", image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80" },
+                        { category: "app", title: "Aplikasi Evaluasi Online", description: "Sistem ujian CBT dengan auto grading", image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=600&q=80" },
+                        { category: "web-guru", title: "Portofolio Guru Digital", description: "Web profil guru dengan sistem informasi lengkap", image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=600&q=80" },
+                        { category: "web-guru", title: "Website Kelas Interaktif", description: "Portal pembelajaran digital untuk siswa", image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=600&q=80" },
+                        { category: "video", title: "Demo LMS Teacher Hub", description: "Video tutorial penggunaan LMS terbaru", image: "", isVideo: true, videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
+                        { category: "menulis", title: "Workshop Menulis Kreatif", description: "Kegiatan pendampingan menulis bersama penulis profesional", image: "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=600&q=80" },
+                        { category: "hrd", title: "Seminar Strategi Tembus HRD", description: "Pelatihan persiapan karir dan tips lolos seleksi", image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=600&q=80" }
+                    ];
+                    showGalleryToast("Menggunakan data contoh (hubungkan Google Sheets untuk data real)");
+                } else {
+                    showGalleryToast(`Berhasil memuat ${galleryData.length} item galeri`);
+                }
+                
+            } catch (error) {
+                console.error("Error fetching gallery from Google Sheets:", error);
+                galleryData = [
+                    { category: "app", title: "Web App Adjarind - Dashboard", description: "Tampilan dashboard admin aplikasi LMS", image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80" },
+                    { category: "app", title: "Aplikasi Evaluasi Online", description: "Sistem ujian CBT dengan auto grading", image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=600&q=80" },
+                    { category: "web-guru", title: "Portofolio Guru Digital", description: "Web profil guru dengan sistem informasi lengkap", image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=600&q=80" },
+                    { category: "web-guru", title: "Website Kelas Interaktif", description: "Portal pembelajaran digital untuk siswa", image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=600&q=80" },
+                    { category: "video", title: "Demo LMS Teacher Hub", description: "Video tutorial penggunaan LMS terbaru", image: "", isVideo: true, videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
+                    { category: "menulis", title: "Workshop Menulis Kreatif", description: "Kegiatan pendampingan menulis bersama penulis profesional", image: "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=600&q=80" },
+                    { category: "hrd", title: "Seminar Strategi Tembus HRD", description: "Pelatihan persiapan karir dan tips lolos seleksi", image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=600&q=80" }
+                ];
+                showGalleryToast("Gagal memuat dari Google Sheets, menggunakan data contoh");
+            }
+            
+            if (loadingState) loadingState.classList.add('hidden');
+            if (grid) grid.classList.remove('hidden');
+            renderGallery();
+        }
     </script>
 
     <nav class="fixed top-0 left-0 w-full z-50 bg-[#060d08]/90 backdrop-blur-md border-b border-emerald-950/40">
@@ -115,64 +375,46 @@
                     <span class="text-[10px] uppercase tracking-widest text-slate-400">Semesta</span>
                 </div>
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="#home" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition-colors">Home</a>
+                    <a href="#home" onclick="closeAllViews()" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition-colors">Home</a>
                     <button onclick="openMenuPage('produk-digital')" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition-colors text-left">Produk Digital</button>
                     <button onclick="openMenuPage('bimtek')" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition-colors text-left">Bimtek</button>
-                    <a href="#hubungi-kami" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition-colors">Hubungi Kami</a>
+                    <button onclick="openMenuPage('tata-kelola-hrd')" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition-colors text-left">Akselerasi-SDM</button>
+                    <a href="#gallery-section" onclick="closeAllViews()" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition-colors">Galeri</a>
+                    <a href="#hubungi-kami" onclick="closeAllViews()" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition-colors">Hubungi Kami</a>
                 </div>
                 <div class="hidden md:block">
-                    <a id="nav-cta-btn" href="#" class="bg-gradient-orange px-5 py-2.5 rounded-lg text-sm font-semibold text-neutral-950 shadow-md hover:opacity-90 transition-all transform hover:-translate-y-0.5">
-                        Gabung Sekarang
-                    </a>
+                    <a id="nav-cta-btn" href="#" class="bg-gradient-orange px-5 py-2.5 rounded-lg text-sm font-semibold text-neutral-950 shadow-md hover:opacity-90 transition-all">Gabung Sekarang</a>
                 </div>
                 <div class="md:hidden">
-                    <button id="mobile-menu-toggle" class="text-slate-300 hover:text-white focus:outline-none">
-                        <i class="fa-solid fa-bars text-2xl"></i>
-                    </button>
+                    <button id="mobile-menu-toggle" class="text-slate-300 hover:text-white"><i class="fa-solid fa-bars text-2xl"></i></button>
                 </div>
             </div>
         </div>
         <div id="mobile-menu" class="hidden md:hidden bg-[#060d08] border-b border-emerald-950 px-4 pt-2 pb-4 space-y-2">
-            <a href="#home" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-emerald-950/50 hover:text-emerald-400">Home</a>
-            <button onclick="openMenuPage('produk-digital'); toggleMobileMenu();" class="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-emerald-950/50 hover:text-emerald-400">Produk Digital</button>
-            <button onclick="openMenuPage('bimtek'); toggleMobileMenu();" class="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-emerald-950/50 hover:text-emerald-400">Bimtek</button>
-            <a href="#hubungi-kami" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-emerald-950/50 hover:text-emerald-400">Hubungi Kami</a>
-            <div class="pt-2">
-                <a id="mobile-nav-cta-btn" href="#" class="block text-center bg-gradient-orange px-4 py-2.5 rounded-lg text-sm font-semibold text-neutral-950">
-                    Gabung Sekarang
-                </a>
-            </div>
+            <a href="#home" onclick="closeAllViews(); toggleMobileMenu();" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-emerald-950/50">Home</a>
+            <button onclick="openMenuPage('produk-digital'); toggleMobileMenu();" class="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-emerald-950/50">Produk Digital</button>
+            <button onclick="openMenuPage('bimtek'); toggleMobileMenu();" class="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-emerald-950/50">Bimtek</button>
+            <button onclick="openMenuPage('tata-kelola-hrd'); toggleMobileMenu();" class="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-emerald-950/50">Pendampingan HRD</button>
+            <a href="#gallery-section" onclick="closeAllViews(); toggleMobileMenu();" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-emerald-950/50">Galeri</a>
+            <a href="#hubungi-kami" onclick="closeAllViews(); toggleMobileMenu();" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-emerald-950/50">Hubungi Kami</a>
         </div>
     </nav>
 
     <main id="main-content" class="pt-20">
         
         <div id="landing-page-view">
-            
             <section id="home" class="relative min-h-[90vh] flex items-center justify-center overflow-hidden py-16 px-4">
-                <div class="absolute inset-0 z-0 opacity-20">
+                <div class="absolute inset-0 opacity-20 z-0">
                     <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1920&q=80" alt="Tech Background" class="w-full h-full object-cover">
                 </div>
                 <div class="absolute inset-0 bg-gradient-to-b from-[#060d08]/50 via-[#060d08] to-[#060d08] z-10"></div>
-                
                 <div class="relative z-20 max-w-5xl mx-auto text-center px-4">
-                    <span class="inline-block px-4 py-1.5 mb-6 text-xs font-semibold uppercase tracking-wider text-emerald-400 bg-emerald-950/60 border border-emerald-800/50 rounded-full">
-                        Akselerasi EdTech Terintegrasi
-                    </span>
-                    <h1 id="hero-title" class="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-tight mb-6">
-                        Solusi Digitalisasi Lembaga & <br class="hidden sm:inline">
-                        <span class="text-gradient-green">Pendampingan Pembuatan Web</span>
-                    </h1>
-                    <p id="hero-subtitle" class="text-base sm:text-lg md:text-xl text-slate-300 max-w-3xl mx-auto mb-10 leading-relaxed">
-                        Transformasikan tata kelola institusi pendidikan dan optimalkan kompetensi digital melalui program Workshop Literasi AI serta perluasan media digital yang kredibel.
-                    </p>
+                    <span class="inline-block px-4 py-1.5 mb-6 text-xs font-semibold uppercase tracking-wider text-emerald-400 bg-emerald-950/60 border border-emerald-800/50 rounded-full">Akselerasi EdTech Terintegrasi</span>
+                    <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-6">Solusi Digitalisasi Lembaga & <br><span class="text-gradient-green">Pendampingan Pembuatan Web</span></h1>
+                    <p class="text-base sm:text-lg md:text-xl text-slate-300 max-w-3xl mx-auto mb-10">Transformasikan tata kelola institusi pendidikan dan optimalkan kompetensi digital melalui program Workshop Literasi AI serta perluasan media digital yang kredibel.</p>
                     <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                        <a id="hero-cta-primary" href="#" class="w-full sm:w-auto bg-gradient-orange text-neutral-950 font-semibold px-8 py-4 rounded-xl text-base shadow-lg shadow-orange-500/10 hover:opacity-95 transition-all transform hover:-translate-y-0.5 text-center">
-                            Mulai Pendampingan <i class="fa-solid fa-arrow-right ml-2"></i>
-                        </a>
-                        <a id="hero-cta-secondary" href="#" class="w-full sm:w-auto bg-gradient-green text-neutral-950 font-semibold px-8 py-4 rounded-xl text-base shadow-lg shadow-emerald-500/10 hover:opacity-95 transition-all transform hover:-translate-y-0.5 text-center">
-                            Lihat Ekosistem SaaS
-                        </a>
+                        <a id="hero-cta-primary" href="#" class="w-full sm:w-auto bg-gradient-orange text-neutral-950 font-semibold px-8 py-4 rounded-xl shadow-lg hover:opacity-95 text-center">Mulai Pendampingan <i class="fa-solid fa-arrow-right ml-2"></i></a>
+                        <a href="#produk-saas" class="w-full sm:w-auto bg-gradient-green text-neutral-950 font-semibold px-8 py-4 rounded-xl shadow-lg hover:opacity-95 text-center">Lihat Ekosistem SaaS</a>
                     </div>
                 </div>
             </section>
@@ -182,34 +424,27 @@
                     <h2 class="text-2xl sm:text-3xl font-bold mb-4">Program Utama <span class="text-gradient-green">Digitalisasi</span></h2>
                     <p class="text-slate-400 text-sm sm:text-base">Akselerasi mutu pendidik dan standarisasi infrastruktur IT internal secara profesional.</p>
                 </div>
-                
-                <div id="fitur-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div class="bg-emerald-950/10 border border-emerald-900/30 p-8 rounded-2xl hover:border-emerald-500/30 transition-all group flex flex-col justify-between">
                         <div>
-                            <div class="w-14 h-14 rounded-xl bg-emerald-900/30 flex items-center justify-center text-emerald-400 text-2xl mb-6 group-hover:bg-emerald-500 group-hover:text-neutral-950 transition-all">
-                                <i class="fa-solid fa-chalkboard-user"></i>
-                            </div>
-                            <h3 class="text-xl font-semibold mb-3 text-white">Bimtek Guru</h3>
+                            <div class="w-14 h-14 rounded-xl bg-emerald-900/30 flex items-center justify-center text-emerald-400 text-2xl mb-6 group-hover:bg-emerald-500 group-hover:text-neutral-950 transition-all"><i class="fa-solid fa-chalkboard-user"></i></div>
+                            <h3 class="text-xl font-semibold mb-3">Bimtek Guru</h3>
                             <p class="text-slate-400 text-sm leading-relaxed mb-6">Peningkatan literasi digital bagi jajaran pendidik melalui Workshop Literasi AI guna menghasilkan materi ajar yang interaktif dan adaptif.</p>
                         </div>
                         <button onclick="openMenuPage('bimtek')" class="text-sm font-medium text-emerald-400 hover:text-emerald-300 flex items-center gap-2">Selengkapnya <i class="fa-solid fa-chevron-right text-xs"></i></button>
                     </div>
                     <div class="bg-emerald-950/10 border border-emerald-900/30 p-8 rounded-2xl hover:border-emerald-500/30 transition-all group flex flex-col justify-between">
                         <div>
-                            <div class="w-14 h-14 rounded-xl bg-emerald-900/30 flex items-center justify-center text-emerald-400 text-2xl mb-6 group-hover:bg-emerald-500 group-hover:text-neutral-950 transition-all">
-                                <i class="fa-solid fa-code"></i>
-                            </div>
-                            <h3 class="text-xl font-semibold mb-3 text-white">Pendampingan Web Sekolah</h3>
+                            <div class="w-14 h-14 rounded-xl bg-emerald-900/30 flex items-center justify-center text-emerald-400 text-2xl mb-6 group-hover:bg-emerald-500 group-hover:text-neutral-950 transition-all"><i class="fa-solid fa-code"></i></div>
+                            <h3 class="text-xl font-semibold mb-3">Pendampingan Web Sekolah</h3>
                             <p class="text-slate-400 text-sm leading-relaxed mb-6">Membangun portal informasi institusi secara mandiri dengan arsitektur modern berkecepatan tinggi, aman, dan mudah dikelola secara internal.</p>
                         </div>
                         <button onclick="openMenuPage('produk-digital')" class="text-sm font-medium text-emerald-400 hover:text-emerald-300 flex items-center gap-2">Selengkapnya <i class="fa-solid fa-chevron-right text-xs"></i></button>
                     </div>
                     <div class="bg-emerald-950/10 border border-emerald-900/30 p-8 rounded-2xl hover:border-emerald-500/30 transition-all group flex flex-col justify-between">
                         <div>
-                            <div class="w-14 h-14 rounded-xl bg-emerald-900/30 flex items-center justify-center text-emerald-400 text-2xl mb-6 group-hover:bg-emerald-500 group-hover:text-neutral-950 transition-all">
-                                <i class="fa-solid fa-book-open"></i>
-                            </div>
-                            <h3 class="text-xl font-semibold mb-3 text-white">Digitalisasi Modul & Buku</h3>
+                            <div class="w-14 h-14 rounded-xl bg-emerald-900/30 flex items-center justify-center text-emerald-400 text-2xl mb-6 group-hover:bg-emerald-500 group-hover:text-neutral-950 transition-all"><i class="fa-solid fa-book-open"></i></div>
+                            <h3 class="text-xl font-semibold mb-3">Digitalisasi Modul & Buku</h3>
                             <p class="text-slate-400 text-sm leading-relaxed mb-6">Konversi materi ajar konvensional menjadi bahan cetak digital interaktif, terintegrasi penuh dengan ekosistem penerbitan nasional.</p>
                         </div>
                         <a href="#sinergi-penerbit" class="text-sm font-medium text-emerald-400 hover:text-emerald-300 flex items-center gap-2">Selengkapnya <i class="fa-solid fa-chevron-right text-xs"></i></a>
@@ -217,102 +452,118 @@
                 </div>
             </section>
 
-            <section id="produk-saas" class="py-24 bg-neutral-950/40 border-t border-b border-emerald-950/40 overflow-hidden">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
-                    <div class="md:flex md:items-end md:justify-between">
-                        <div class="max-w-xl">
-                            <h2 class="text-2xl sm:text-3xl font-bold mb-4">Ekosistem Aplikasi <span class="text-gradient-orange">SaaS EdTech</span></h2>
-                            <p class="text-slate-400 text-sm sm:text-base">Sistem tata kelola internal berbasis cloud terintegrasi untuk efisiensi birokrasi dan administrasi institusi.</p>
-                        </div>
-                        <div class="mt-4 md:mt-0 text-slate-400 text-xs hidden sm:block">
-                            <i class="fa-solid fa-circle-info text-emerald-400 mr-1"></i> Arahkan kursor untuk menjeda putaran
-                        </div>
-                    </div>
+            <!-- ============ GALERI SECTION ============ -->
+            <section id="gallery-section" class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-emerald-950/40">
+                <div class="text-center max-w-3xl mx-auto mb-12">
+                    <span class="inline-block px-3 py-1 mb-4 text-[11px] font-semibold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-md">
+                        Dokumentasi Kegiatan & Produk
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-bold mb-4">Galeri <span class="text-gradient-green">Koleksi</span></h2>
+                    <p class="text-slate-400 text-sm sm:text-base">Portofolio produk, hasil karya guru, demo aplikasi, dan dokumentasi kegiatan pendampingan</p>
                 </div>
 
-                <div class="relative w-full overflow-hidden py-4 bg-[#030804]">
-                    <div id="saas-marquee" class="animate-marquee">
-                        
-                        <div class="w-[320px] sm:w-[380px] shrink-0 mx-4 bg-emerald-950/10 border border-emerald-900/30 rounded-2xl overflow-hidden p-6 hover:border-orange-500/30 transition-all">
-                            <div class="h-44 rounded-xl overflow-hidden mb-6 relative">
-                                <img id="img-saas-1" src="https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?auto=format&fit=crop&w=600&q=80" alt="Evaluasi" class="w-full h-full object-cover">
-                                <div class="absolute top-3 left-3 bg-neutral-950/80 backdrop-blur-md px-3 py-1 rounded-md text-xs font-semibold text-emerald-400 border border-emerald-800/40">SaaS Platform</div>
-                            </div>
-                            <h3 class="text-lg font-bold mb-2">Aplikasi Evaluasi & Psikotes</h3>
-                            <p class="text-slate-400 text-xs leading-relaxed mb-6 h-12 overflow-hidden text-ellipsis">Digitalisasi sistem ujian daring (CBT) dan asesmen psikologi pemetaan akademik peserta didik secara real-time.</p>
-                            <a id="demo-link-1" href="#" target="_blank" class="block text-center w-full bg-neutral-900 border border-emerald-800/40 text-emerald-400 py-2.5 rounded-lg text-xs font-semibold hover:bg-gradient-green hover:text-neutral-950 transition-all">Lihat Demo <i class="fa-solid fa-arrow-up-right-from-square ml-1.5 text-[10px]"></i></a>
-                        </div>
+                <!-- Category Tabs -->
+                <div class="flex flex-wrap justify-center gap-3 mb-10">
+                    <button onclick="filterGallery('all')" data-cat="all" class="category-tab active px-5 py-2 rounded-full bg-gray-800 text-gray-300 hover:bg-emerald-600 hover:text-white transition">
+                        <i class="fas fa-th-large mr-2"></i>Semua
+                    </button>
+                    <button onclick="filterGallery('app')" data-cat="app" class="category-tab px-5 py-2 rounded-full bg-gray-800 text-gray-300 hover:bg-emerald-600 hover:text-white transition">
+                        <i class="fas fa-mobile-alt mr-2"></i>Web App Adjarind
+                    </button>
+                    <button onclick="filterGallery('web-guru')" data-cat="web-guru" class="category-tab px-5 py-2 rounded-full bg-gray-800 text-gray-300 hover:bg-emerald-600 hover:text-white transition">
+                        <i class="fas fa-chalkboard mr-2"></i>Web Buatan Guru
+                    </button>
+                    <button onclick="filterGallery('video')" data-cat="video" class="category-tab px-5 py-2 rounded-full bg-gray-800 text-gray-300 hover:bg-emerald-600 hover:text-white transition">
+                        <i class="fas fa-video mr-2"></i>Demo Video LMS
+                    </button>
+                    <button onclick="filterGallery('menulis')" data-cat="menulis" class="category-tab px-5 py-2 rounded-full bg-gray-800 text-gray-300 hover:bg-emerald-600 hover:text-white transition">
+                        <i class="fas fa-pen-fancy mr-2"></i>Pendampingan Menulis
+                    </button>
+                    <button onclick="filterGallery('hrd')" data-cat="hrd" class="category-tab px-5 py-2 rounded-full bg-gray-800 text-gray-300 hover:bg-emerald-600 hover:text-white transition">
+                        <i class="fas fa-users mr-2"></i>Strategi Tembus HRD
+                    </button>
+                </div>
 
-                        <div class="w-[320px] sm:w-[380px] shrink-0 mx-4 bg-emerald-950/10 border border-emerald-900/30 rounded-2xl overflow-hidden p-6 hover:border-orange-500/30 transition-all">
-                            <div class="h-44 rounded-xl overflow-hidden mb-6 relative">
-                                <img id="img-saas-2" src="https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=600&q=80" alt="Absensi" class="w-full h-full object-cover">
-                                <div class="absolute top-3 left-3 bg-neutral-950/80 backdrop-blur-md px-3 py-1 rounded-md text-xs font-semibold text-emerald-400 border border-emerald-800/40">Cloud App</div>
-                            </div>
-                            <h3 class="text-lg font-bold mb-2">Absensi Digital Multi-Cabang</h3>
-                            <p class="text-slate-400 text-xs leading-relaxed mb-6 h-12 overflow-hidden text-ellipsis">Pencatatan kehadiran berbasis geolokasi dan proteksi anti-fraud demi akurasi pelaporan kehadiran tenaga pendidik.</p>
-                            <a id="demo-link-2" href="#" target="_blank" class="block text-center w-full bg-neutral-900 border border-emerald-800/40 text-emerald-400 py-2.5 rounded-lg text-xs font-semibold hover:bg-gradient-green hover:text-neutral-950 transition-all">Lihat Demo <i class="fa-solid fa-arrow-up-right-from-square ml-1.5 text-[10px]"></i></a>
-                        </div>
+                <!-- Loading State -->
+                <div id="gallery-loading-state" class="text-center py-12">
+                    <div class="loading-spinner mx-auto mb-4"></div>
+                    <p class="text-gray-400">Memuat galeri dari Google Sheets...</p>
+                </div>
 
-                        <div class="w-[320px] sm:w-[380px] shrink-0 mx-4 bg-emerald-950/10 border border-emerald-900/30 rounded-2xl overflow-hidden p-6 hover:border-orange-500/30 transition-all">
-                            <div class="h-44 rounded-xl overflow-hidden mb-6 relative">
-                                <img id="img-saas-3" src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80" alt="Dashboard" class="w-full h-full object-cover">
-                                <div class="absolute top-3 left-3 bg-neutral-950/80 backdrop-blur-md px-3 py-1 rounded-md text-xs font-semibold text-emerald-400 border border-emerald-800/40">Data Admin</div>
-                            </div>
-                            <h3 class="text-lg font-bold mb-2">Dashboard Kelola Data Terpusat</h3>
-                            <p class="text-slate-400 text-xs leading-relaxed mb-6 h-12 overflow-hidden text-ellipsis">Infrastruktur monitoring finansial, arus administrasi siswa, dan rekap operasional multi-cabang terintegrasi Sheets.</p>
-                            <a id="demo-link-3" href="#" target="_blank" class="block text-center w-full bg-neutral-900 border border-emerald-800/40 text-emerald-400 py-2.5 rounded-lg text-xs font-semibold hover:bg-gradient-green hover:text-neutral-950 transition-all">Lihat Demo <i class="fa-solid fa-arrow-up-right-from-square ml-1.5 text-[10px]"></i></a>
-                        </div>
+                <!-- Gallery Grid -->
+                <div id="gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Gallery items akan diisi oleh JavaScript -->
+                </div>
 
-                        <div class="w-[320px] sm:w-[380px] shrink-0 mx-4 bg-emerald-950/10 border border-emerald-900/30 rounded-2xl overflow-hidden p-6 hover:border-orange-500/30 transition-all">
-                            <div class="h-44 rounded-xl overflow-hidden mb-6 relative">
-                                <img id="img-saas-1-dup" src="https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?auto=format&fit=crop&w=600&q=80" alt="Evaluasi" class="w-full h-full object-cover">
-                                <div class="absolute top-3 left-3 bg-neutral-950/80 backdrop-blur-md px-3 py-1 rounded-md text-xs font-semibold text-emerald-400 border border-emerald-800/40">SaaS Platform</div>
-                            </div>
-                            <h3 class="text-lg font-bold mb-2">Aplikasi Evaluasi & Psikotes</h3>
-                            <p class="text-slate-400 text-xs leading-relaxed mb-6 h-12 overflow-hidden text-ellipsis">Digitalisasi sistem ujian daring (CBT) dan asesmen psikologi pemetaan akademik peserta didik secara real-time.</p>
-                            <a id="demo-link-1-dup" href="#" target="_blank" class="block text-center w-full bg-neutral-900 border border-emerald-800/40 text-emerald-400 py-2.5 rounded-lg text-xs font-semibold hover:bg-gradient-green hover:text-neutral-950 transition-all">Lihat Demo <i class="fa-solid fa-arrow-up-right-from-square ml-1.5 text-[10px]"></i></a>
-                        </div>
-                        <div class="w-[320px] sm:w-[380px] shrink-0 mx-4 bg-emerald-950/10 border border-emerald-900/30 rounded-2xl overflow-hidden p-6 hover:border-orange-500/30 transition-all">
-                            <div class="h-44 rounded-xl overflow-hidden mb-6 relative">
-                                <img id="img-saas-2-dup" src="https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=600&q=80" alt="Absensi" class="w-full h-full object-cover">
-                                <div class="absolute top-3 left-3 bg-neutral-950/80 backdrop-blur-md px-3 py-1 rounded-md text-xs font-semibold text-emerald-400 border border-emerald-800/40">Cloud App</div>
-                            </div>
-                            <h3 class="text-lg font-bold mb-2">Learning Management Sistem Bimbel Multi-Cabang</h3>
-                            <p class="text-slate-400 text-xs leading-relaxed mb-6 h-12 overflow-hidden text-ellipsis">One Stop Aplikasi Siswa berisi Modul, Try Out, Absen, dan semua kebutuhan Pembelajaran.</p>
-                            <a id="demo-link-2-dup" href="#" target="_blank" class="block text-center w-full bg-neutral-900 border border-emerald-800/40 text-emerald-400 py-2.5 rounded-lg text-xs font-semibold hover:bg-gradient-green hover:text-neutral-950 transition-all">Lihat Demo <i class="fa-solid fa-arrow-up-right-from-square ml-1.5 text-[10px]"></i></a>
-                        </div>
-                        <div class="w-[320px] sm:w-[380px] shrink-0 mx-4 bg-emerald-950/10 border border-emerald-900/30 rounded-2xl overflow-hidden p-6 hover:border-orange-500/30 transition-all">
-                            <div class="h-44 rounded-xl overflow-hidden mb-6 relative">
-                                <img id="img-saas-3-dup" src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80" alt="Dashboard" class="w-full h-full object-cover">
-                                <div class="absolute top-3 left-3 bg-neutral-950/80 backdrop-blur-md px-3 py-1 rounded-md text-xs font-semibold text-emerald-400 border border-emerald-800/40">Data Admin</div>
-                            </div>
-                            <h3 class="text-lg font-bold mb-2">CBT Test</h3>
-                            <p class="text-slate-400 text-xs leading-relaxed mb-6 h-12 overflow-hidden text-ellipsis">Infrastruktur Tes Onlie siswa, Sesuaia standar nasional untuk multi-cabang terintegrasi Sheets.</p>
-                            <a id="demo-link-3-dup" href="#" target="_blank" class="block text-center w-full bg-neutral-900 border border-emerald-800/40 text-emerald-400 py-2.5 rounded-lg text-xs font-semibold hover:bg-gradient-green hover:text-neutral-950 transition-all">Lihat Demo <i class="fa-solid fa-arrow-up-right-from-square ml-1.5 text-[10px]"></i></a>
-                        </div>
+                <!-- Admin Info -->
+                <div class="mt-10 p-4 bg-emerald-950/10 border border-emerald-900/30 rounded-xl text-center">
+                    <p class="text-xs text-gray-400">
+                        <i class="fas fa-edit text-emerald-400 mr-2"></i>
+                        <strong>Cara Edit Galeri:</strong> Edit file di 
+                        <a href="#" id="gallery-sheet-link" target="_blank" class="text-emerald-400 hover:underline">Google Sheets</a> 
+                        (kolom: kategori, judul, deskripsi, nama_file_gambar, is_video, video_url) | Upload gambar ke folder GitHub Anda
+                    </p>
+                </div>
+            </section>
 
+            <section id="produk-saas" class="py-24 bg-neutral-950/40 border-t border-b border-emerald-950/40">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center max-w-3xl mx-auto mb-16">
+                        <span class="inline-block px-3 py-1 mb-4 text-[11px] font-semibold uppercase tracking-wider text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-md">
+                            Ekosistem Cloud Terintegrasi
+                        </span>
+                        <h2 class="text-2xl sm:text-3xl font-bold mb-4">Ekosistem Aplikasi <span class="text-gradient-orange">SaaS EdTech</span></h2>
+                        <p class="text-slate-400 text-sm sm:text-base">Infrastruktur tata kelola internal berbasis cloud terintegrasi untuk efisiensi birokrasi, finansial, dan administrasi multi-cabang secara terpusat.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="bg-[#030804] border border-emerald-950/60 rounded-2xl p-6 hover:border-orange-500/30 transition-all duration-300 flex flex-col justify-between shadow-xl group">
+                            <div>
+                                <div class="h-48 rounded-xl overflow-hidden mb-6 relative">
+                                    <img src="https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?auto=format&fit=crop&w=600&q=80" alt="Evaluasi & Psikotes" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                    <div class="absolute top-3 left-3 bg-neutral-950/80 backdrop-blur-md px-3 py-1 rounded-md text-[10px] font-semibold text-emerald-400 border border-emerald-800/40">CBT Engine</div>
+                                </div>
+                                <h3 class="text-lg font-bold text-white mb-2 group-hover:text-orange-400 transition-colors">Aplikasi Evaluasi & Psikotes</h3>
+                                <p class="text-slate-400 text-xs sm:text-sm leading-relaxed mb-6">Digitalisasi sistem ujian daring (Computer Based Test) dan asesmen psikologi guna pemetaan akademik serta minat bakat peserta didik secara real-time.</p>
+                            </div>
+                            <a id="demo-link-1" href="#" target="_blank" class="block text-center w-full bg-emerald-950/20 border border-emerald-800/40 text-emerald-400 py-3 rounded-xl text-xs font-semibold hover:bg-gradient-green hover:text-neutral-950 transition-all duration-200">Lihat Demo Sistem <i class="fa-solid fa-arrow-up-right-from-square ml-1.5 text-[10px]"></i></a>
+                        </div>
+                        <div class="bg-[#030804] border border-emerald-950/60 rounded-2xl p-6 hover:border-orange-500/30 transition-all duration-300 flex flex-col justify-between shadow-xl group">
+                            <div>
+                                <div class="h-48 rounded-xl overflow-hidden mb-6 relative">
+                                    <img src="https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=600&q=80" alt="Absensi Digital" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                    <div class="absolute top-3 left-3 bg-neutral-950/80 backdrop-blur-md px-3 py-1 rounded-md text-[10px] font-semibold text-emerald-400 border border-emerald-800/40">Geofencing App</div>
+                                </div>
+                                <h3 class="text-lg font-bold text-white mb-2 group-hover:text-orange-400 transition-colors">Learning Management Sistem Bimbel Multi-Cabang</h3>
+                                <p class="text-slate-400 text-xs sm:text-sm leading-relaxed mb-6">One Stop Aplikasi Siswa berisi Modul, Try Out, Absen, dan semua kebutuhan Pembelajaran.</p>
+                            </div>
+                            <a id="demo-link-2" href="#" target="_blank" class="block text-center w-full bg-emerald-950/20 border border-emerald-800/40 text-emerald-400 py-3 rounded-xl text-xs font-semibold hover:bg-gradient-green hover:text-neutral-950 transition-all duration-200">Lihat Demo Sistem <i class="fa-solid fa-arrow-up-right-from-square ml-1.5 text-[10px]"></i></a>
+                        </div>
+                        <div class="bg-[#030804] border border-emerald-950/60 rounded-2xl p-6 hover:border-orange-500/30 transition-all duration-300 flex flex-col justify-between shadow-xl group">
+                            <div>
+                                <div class="h-48 rounded-xl overflow-hidden mb-6 relative">
+                                    <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80" alt="Dashboard Terpusat" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                    <div class="absolute top-3 left-3 bg-neutral-950/80 backdrop-blur-md px-3 py-1 rounded-md text-[10px] font-semibold text-emerald-400 border border-emerald-800/40">Management Suite</div>
+                                </div>
+                                <h3 class="text-lg font-bold text-white mb-2 group-hover:text-orange-400 transition-colors">Dashboard Kelola Data Terpusat</h3>
+                                <p class="text-slate-400 text-xs sm:text-sm leading-relaxed mb-6">Infrastruktur monitoring arus kas administrasi siswa, laporan keuangan berkala, dan rekap operasional antar cabang yang terintegrasi penuh ke Google Sheets.</p>
+                            </div>
+                            <a id="demo-link-3" href="#" target="_blank" class="block text-center w-full bg-gradient-orange text-neutral-950 py-3 rounded-xl text-xs font-bold shadow-md hover:opacity-90 transition-all duration-200">Lihat Demo Sistem <i class="fa-solid fa-arrow-up-right-from-square ml-1.5 text-[10px]"></i></a>
+                        </div>
                     </div>
                 </div>
             </section>
 
             <section id="sinergi-penerbit" class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="bg-gradient-to-br from-emerald-950/20 to-neutral-950/80 border border-emerald-900/40 rounded-3xl p-8 sm:p-12 md:p-16 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl -z-10"></div>
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                         <div class="lg:col-span-7">
                             <span class="text-xs font-bold uppercase tracking-wider text-amber-400 bg-amber-500/10 px-3 py-1 rounded-md border border-amber-500/20 mb-4 inline-block">Sinergi Strategis Resmi</span>
-                            <h2 class="text-2xl sm:text-4xl font-bold mb-6 leading-tight text-white">Integrasi Media Cetak & Digital Bersama <span class="text-gradient-green">JP Creative</span></h2>
-                            <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-6">
-                                Setiap program Pendampingan Pembuatan Web dan Digitalisasi Modul di Adjarin Kreatif Semesta disinergikan secara penuh dengan ekosistem penerbitan nasional terpercaya, <strong>JP Creative Bekasi</strong>. Kami mendampingi konversi modul pembelajaran internal Anda ke dalam format buku fisik ber-ISBN resmi Perpustakaan Nasional atau QRCBN, menjamin legalitas serta perluasan distribusi khazanah intelektual lembaga Anda secara akuntabel.
-                            </p>
-                            <a id="penerbit-link" href="#" target="_blank" class="inline-flex items-center gap-2 text-sm font-semibold text-amber-400 hover:text-amber-300 group">
-                                Kunjungi Portal Resmi Penerbit JP Creative <i class="fa-solid fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
-                            </a>
+                            <h2 class="text-2xl sm:text-4xl font-bold mb-6 text-white">Integrasi Media Cetak & Digital Bersama <span class="text-gradient-green">JP Creative</span></h2>
+                            <p class="text-slate-300 text-sm sm:text-base mb-6">Setiap program Pendampingan Pembuatan Web dan Digitalisasi Modul di Adjarin Kreatif Semesta disinergikan secara penuh dengan penerbitan nasional ber-ISBN resmi Perpustakaan Nasional atau QRCBN melalui <strong>JP Creative Bekasi</strong>.</p>
+                            <a id="penerbit-link" href="#" target="_blank" class="text-sm font-semibold text-amber-400 hover:text-amber-300">Kunjungi Portal Resmi Penerbit JP Creative →</a>
                         </div>
                         <div class="lg:col-span-5">
-                            <div class="relative rounded-2xl overflow-hidden border border-emerald-800/30 shadow-2xl shadow-emerald-950/50">
-                                <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80" alt="Sinergi Buku" class="w-full h-auto object-cover">
-                            </div>
+                            <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80" alt="Sinergi Buku" class="w-full h-auto rounded-2xl border border-emerald-800/30">
                         </div>
                     </div>
                 </div>
@@ -322,54 +573,20 @@
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
                     <div class="lg:col-span-5">
                         <h2 class="text-2xl sm:text-3xl font-bold mb-4">Konsultasikan <span class="text-gradient-orange">Kebutuhan Anda</span></h2>
-                        <p class="text-slate-400 text-sm sm:text-base mb-8">Tim administrator Adjarin Kreatif Semesta siap memberikan skema pendampingan terbaik sesuai regulasi KBLI dan standar industri EdTech.</p>
-                        
-                        <div class="space-y-6">
-                            <div class="flex items-start gap-4">
-                                <div class="w-10 h-10 shrink-0 bg-emerald-950/50 border border-emerald-800/40 rounded-lg flex items-center justify-center text-emerald-400">
-                                    <i class="fa-solid fa-location-dot"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-sm font-semibold text-white">Alamat Kantor Utama</h4>
-                                    <p class="text-slate-400 text-xs sm:text-sm mt-1 leading-relaxed">Alamanda Regency Blok K10/20, Karangsatria, Kecamatan Tambun Utara, Kabupaten Bekasi, Provinsi Jawa Barat 17512, Indonesia.</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start gap-4">
-                                <div class="w-10 h-10 shrink-0 bg-emerald-950/50 border border-emerald-800/40 rounded-lg flex items-center justify-center text-emerald-400">
-                                    <i class="fa-solid fa-envelope"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-sm font-semibold text-white">Korespondensi Email</h4>
-                                    <p id="contact-email" class="text-slate-400 text-xs sm:text-sm mt-1"></p>
-                                </div>
-                            </div>
-                        </div>
+                        <p class="text-slate-400 text-sm sm:text-base mb-6">Tim administrator Adjarin Kreatif Semesta siap memberikan skema pendampingan terbaik sesuai ketentuan korporasi.</p>
+                        <p class="text-slate-400 text-xs leading-relaxed">Alamanda Regency Blok K10/20, Karangsatria, Tambun Utara, Kab. Bekasi, Jawa Barat 17512, Indonesia.</p>
+                        <p id="contact-email" class="text-emerald-400 text-xs sm:text-sm mt-3"></p>
                     </div>
-                    
                     <div class="lg:col-span-7">
                         <div class="bg-neutral-950/60 border border-emerald-900/30 p-8 rounded-2xl">
-                            <h3 class="text-lg font-bold mb-6 flex items-center gap-2"><i class="fa-solid fa-paper-plane text-emerald-400 text-sm"></i> Kirim Pesan Cepat via WhatsApp</h3>
                             <form onsubmit="sendWhatsAppMessage(event)" class="space-y-5">
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Nama Instansi / Perorangan</label>
-                                    <input type="text" id="form-name" required class="w-full bg-[#030804] border border-emerald-900/50 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-emerald-400" placeholder="Contoh: Sekolah HighSchool Mulia / Bapak Ahmad">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Program atau Layanan Pemakatan</label>
-                                    <select id="form-service" class="w-full bg-[#030804] border border-emerald-900/50 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-emerald-400">
-                                        <option value="Bimtek Guru & Workshop Literasi AI">Bimtek Guru & Workshop Literasi AI</option>
-                                        <option value="Pendampingan Pembuatan Web Institusi">Pendampingan Pembuatan Web Institusi</option>
-                                        <option value="Integrasi SaaS Kelola Data Terpusat">Integrasi SaaS Kelola Data Terpusat</option>
-                                        <option value="Digitalisasi Modul & Sinergi Penerbit ISBN">Digitalisasi Modul & Sinergi Penerbit ISBN</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Deskripsi Kebutuhan Tambahan</label>
-                                    <textarea id="form-message" rows="4" required class="w-full bg-[#030804] border border-emerald-900/50 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-emerald-400" placeholder="Tuliskan spesifikasi teknis atau jumlah peserta pendampingan yang Anda rencanakan..."></textarea>
-                                </div>
-                                <button type="submit" class="w-full bg-brand-wa text-neutral-950 font-bold py-3.5 rounded-xl text-sm shadow-md hover:opacity-90 transition-all flex items-center justify-center gap-2">
-                                    <i class="fa-brands fa-whatsapp text-lg"></i> Kirim via WhatsApp Resmi
-                                </button>
+                                <input type="text" id="form-name" required class="w-full bg-[#030804] border border-emerald-900/50 rounded-xl px-4 py-3 text-sm" placeholder="Nama Instansi / Perorangan">
+                                <select id="form-service" class="w-full bg-[#030804] border border-emerald-900/50 rounded-xl px-4 py-3 text-sm text-slate-400">
+                                    <option value="Bimtek Guru & Workshop Literasi AI">Bimtek Guru & Workshop Literasi AI</option>
+                                    <option value="Pendampingan Pembuatan Web Institusi">Pendampingan Pembuatan Web Institusi</option>
+                                </select>
+                                <textarea id="form-message" rows="4" required class="w-full bg-[#030804] border border-emerald-900/50 rounded-xl px-4 py-3 text-sm" placeholder="Deskripsi Kebutuhan Tambahan..."></textarea>
+                                <button type="submit" class="w-full bg-brand-wa text-neutral-950 font-bold py-3.5 rounded-xl text-sm flex items-center justify-center gap-2"><i class="fa-brands fa-whatsapp text-lg"></i> Kirim via WhatsApp Resmi</button>
                             </form>
                         </div>
                     </div>
@@ -378,206 +595,303 @@
         </div>
 
         <div id="dynamic-content-view" class="hidden max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <button onclick="closeMenuPage()" class="mb-8 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-emerald-400 bg-emerald-950/50 px-3 py-1.5 border border-emerald-800/40 rounded-lg hover:bg-emerald-950 transition-colors">
-                <i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard Utama
-            </button>
+            <button onclick="closeAllViews()" class="mb-8 inline-flex items-center gap-2 text-xs font-semibold text-emerald-400 bg-emerald-950/50 px-3 py-1.5 border border-emerald-800/40 rounded-lg"><i class="fa-solid fa-arrow-left"></i> Kembali ke Beranda</button>
             <div id="dynamic-loading-state" class="text-center py-12">
                 <i class="fa-solid fa-circle-notch text-emerald-400 text-3xl animate-spin"></i>
-                <p class="text-slate-400 text-xs uppercase tracking-widest mt-4">Sinkronisasi Data Dashboard Admin Sheets...</p>
+                <p class="text-slate-400 text-xs uppercase tracking-widest mt-4">Menyelaraskan Dashboard Admin Sheets...</p>
             </div>
             <article id="dynamic-article" class="hidden">
-                <div class="h-64 sm:h-96 rounded-2xl overflow-hidden border border-emerald-900/30 mb-8 shadow-xl">
-                    <img id="dynamic-article-image" src="" alt="Cover Banner" class="w-full h-full object-cover">
+                <div class="h-64 sm:h-96 rounded-2xl overflow-hidden border border-emerald-900/30 mb-8"><img id="dynamic-article-image" src="" class="w-full h-full object-cover" alt="Banner"></div>
+                <h1 id="dynamic-article-title" class="text-3xl sm:text-4xl font-bold mb-6 text-white"></h1>
+                <div id="dynamic-article-body" class="article-content text-slate-300 text-sm sm:text-base border-t border-emerald-950/40 pt-6"></div>
+                
+                <div id="cta-pelajari-lebih-lanjut" class="hidden mt-12 pt-8 border-t border-emerald-900/40 text-center">
+                    <p class="text-slate-400 text-xs sm:text-sm mb-4">Ingin melihat spesifikasi materi kurikulum digital secara terperinci?</p>
+                    <button onclick="switchToMateriGuruView()" class="inline-flex items-center gap-2 bg-gradient-orange text-neutral-950 font-bold px-6 py-3.5 rounded-xl text-xs sm:text-sm shadow-lg shadow-orange-500/20 hover:scale-[1.01] transition-transform">
+                        Pelajari Lebih Lanjut Layanan Web Guru <i class="fa-solid fa-arrow-right"></i>
+                    </button>
                 </div>
-                <h1 id="dynamic-article-title" class="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-6"></h1>
-                <div id="dynamic-article-body" class="article-content text-slate-300 text-sm sm:text-base leading-relaxed border-t border-emerald-950/40 pt-6">
-                    </div>
             </article>
+        </div>
+
+        <!-- 11 MATERI SUB-VIEW MENU -->
+        <div id="materi-guru-view" class="hidden bg-[#0a1628] font-inter min-h-screen pb-20">
+            <div class="max-w-7xl mx-auto px-6 pt-10">
+                <button onclick="openMenuPage('bimtek')" class="inline-flex items-center gap-2 text-xs font-medium text-green-400 bg-green-500/10 px-3 py-1.5 rounded-lg border border-green-500/20 mb-6">
+                    <i class="fa-solid fa-arrow-left"></i> Kembali ke Artikel Bimtek
+                </button>
+            </div>
+            <section class="relative overflow-hidden py-12 px-6">
+                <div class="absolute top-10 right-20 w-72 h-72 bg-green-500/5 rounded-full blur-3xl"></div>
+                <div class="mx-auto max-w-7xl">
+                    <div class="grid lg:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <div class="inline-flex items-center gap-2 glass rounded-full px-4 py-1.5 mb-6">
+                                <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                                <span class="text-[10px] font-medium text-green-400 uppercase tracking-widest">Pendampingan Web Interaktif untuk Guru</span>
+                            </div>
+                            <h2 class="text-3xl sm:text-5xl font-semibold leading-[1.1] mb-5">Bangun Web Profesional Guru dengan <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-300">AI & Jamstack</span></h2>
+                            <p class="text-sm text-green-200/50 mb-7">Modal Rp10k–15k/tahun. 11 materi pendampingan. Dari portfolio guru hingga kuis interaktif & perangkat otomatis—semua dibangun dengan bantuan AI.</p>
+                            <div class="flex flex-wrap gap-3">
+                                <a href="#jenis" class="inline-flex items-center gap-2 bg-green-500 text-[#0a1628] px-5 py-2.5 rounded-lg text-xs font-semibold glow-green">Lihat 11 Materi <i data-lucide="arrow-down" class="w-3.5 h-3.5"></i></a>
+                                <a href="https://wa.me/6285710908070?text=Halo%20Adjarind%2C%20saya%20tertarik%20pendampingan%20web%20untuk%20guru" target="_blank" class="inline-flex items-center gap-2 bg-orange-500 text-white px-5 py-2.5 rounded-lg text-xs font-semibold glow-orange">Mulai Pendampingan</a>
+                            </div>
+                        </div>
+                        <div class="relative flex justify-center">
+                            <div class="w-full max-w-sm glass rounded-2xl overflow-hidden glow-green p-5 space-y-3 bg-[#0d1f35]">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center text-[#0a1628] font-bold text-sm">SN</div>
+                                    <div>
+                                        <div class="h-3 w-28 bg-green-400/30 rounded mb-1.5"></div>
+                                        <div class="h-2 w-20 bg-green-400/10 rounded"></div>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-3 gap-1.5"><div class="h-12 bg-green-500/10 rounded-lg"></div><div class="h-12 bg-green-500/10 rounded-lg"></div><div class="h-12 bg-green-500/10 rounded-lg"></div></div>
+                                <div class="h-2 w-full bg-green-400/10 rounded"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="jenis" class="py-12 px-6">
+                <div class="max-w-7xl mx-auto">
+                    <div class="text-center mb-10">
+                        <h3 class="text-2xl font-semibold">11 Materi Web untuk Guru</h3>
+                        <p class="text-xs text-green-200/40 mt-1">Klik kartu untuk detail + sample kode HTML siap pakai</p>
+                    </div>
+                    <div class="flex flex-wrap justify-center gap-2 mb-8">
+                        <button onclick="filterCat('all')" class="cat-btn text-xs font-medium px-4 py-2 rounded-full bg-green-500 text-[#0a1628]" id="cat-all">Semua (11)</button>
+                        <button onclick="filterCat('web')" class="cat-btn text-xs font-medium px-4 py-2 rounded-full bg-green-500/10 text-green-400 border border-green-500/20" id="cat-web">Web Guru (6)</button>
+                        <button onclick="filterCat('perangkat')" class="cat-btn text-xs font-medium px-4 py-2 rounded-full bg-green-500/10 text-green-400 border border-green-500/20" id="cat-perangkat">Perangkat Guru (3)</button>
+                        <button onclick="filterCat('ai')" class="cat-btn text-xs font-medium px-4 py-2 rounded-full bg-green-500/10 text-green-400 border border-green-500/20" id="cat-ai">AI & Mapel (2)</button>
+                    </div>
+                    <div class="space-y-3" id="accContainer">
+                        <!-- Materi items tetap sama seperti sebelumnya -->
+                        <div class="materi-item glass rounded-2xl overflow-hidden" data-cat="web">
+                            <button onclick="tg('a1')" class="w-full flex items-center justify-between p-5 text-left hover:bg-green-500/5">
+                                <div class="flex items-center gap-3"><div class="text-lg">🧑‍🏫</div><div><div class="flex items-center gap-2 flex-wrap"><h4 class="text-sm font-semibold">Portfolio & Profil Guru</h4><span class="text-[9px] bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">Personal Branding</span></div><p class="text-[11px] text-green-200/40">Pengalaman, prestasi, keahlian—untuk naik pangkat</p></div></div>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-green-400/40 transition-transform duration-300" id="ia1"></i>
+                            </button>
+                            <div class="acc-c" id="a1"><div class="p-5 space-y-4 border-t border-green-500/10">
+                                <p class="text-xs text-green-200/60"><strong class="text-green-400">Studi Kasus:</strong> Web dengan HTML+CSS+JS vanilla. Fitur: profil 7+ tahun, jadwal, filter materi.</p>
+                                <div class="code-block"><div class="code-header"><span>portfolio-guru.html</span><button class="copy-btn" onclick="cp(this)">Salin</button></div><pre><code>&lt;section class="max-w-4xl mx-auto text-center"&gt;\n  &lt;h1 class="text-4xl font-semibold"&gt;Siti Nurhaliza, S.Pd&lt;/h1&gt;\n  &lt;p&gt;Guru Bahasa Indonesia | SMP Negeri 1&lt;/p&gt;\n&lt;/section&gt;</code></pre></div>
+                            </div></div>
+                        </div>
+                        <div class="materi-item glass rounded-2xl overflow-hidden" data-cat="web">
+                            <button onclick="tg('a2')" class="w-full flex items-center justify-between p-5 text-left hover:bg-green-500/5">
+                                <div class="flex items-center gap-3"><div class="text-lg">📚</div><div><div class="flex items-center gap-2 flex-wrap"><h4 class="text-sm font-semibold">Web Kelas / Course Hub</h4><span class="text-[9px] bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">Multi-page</span></div><p class="text-[11px] text-green-200/40">Materi, tugas, jadwal, pengumuman dalam satu web terpusat</p></div></div>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-green-400/40 transition-transform duration-300" id="ia2"></i>
+                            </button>
+                            <div class="acc-c" id="a2"><div class="p-5 space-y-2 border-t border-green-500/10 text-xs text-green-200/60"><p><strong class="text-green-400">Referensi:</strong> Struktur halaman terpisah meliputi: kelas-7a.html, tugas.html, dan UTS online yang datanya ditarik langsung dari sel Google Sheets.</p></div></div>
+                        </div>
+                        <div class="materi-item glass rounded-2xl overflow-hidden" data-cat="web">
+                            <button onclick="tg('a3')" class="w-full flex items-center justify-between p-5 text-left hover:bg-green-500/5">
+                                <div class="flex items-center gap-3"><div class="text-lg">🎮</div><div><div class="flex items-center gap-2 flex-wrap"><h4 class="text-sm font-semibold">Kuis & Asesmen Interaktif</h4><span class="text-[9px] bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">Gamified</span></div><p class="text-[11px] text-green-200/40">Soal dari Sheet, sistem kalkulasi poin otomatis, badge, dan progress bar</p></div></div>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-green-400/40 transition-transform duration-300" id="ia3"></i>
+                            </button>
+                            <div class="acc-c" id="a3"><div class="p-5 space-y-2 border-t border-green-500/10 text-xs text-green-200/60"><p><strong class="text-green-400">Inspirasi:</strong> Menggunakan JavaScript Vanilla + API Fetch ke Google Sheets serta memanfaatkan localStorage browser untuk merekam papan skor kuis murid.</p></div></div>
+                        </div>
+                        <div class="materi-item glass rounded-2xl overflow-hidden" data-cat="web">
+                            <button onclick="tg('a4')" class="w-full flex items-center justify-between p-5 text-left hover:bg-green-500/5">
+                                <div class="flex items-center gap-3"><div class="text-lg">🏫</div><div><div class="flex items-center gap-2 flex-wrap"><h4 class="text-sm font-semibold">Web Sekolah / Komunitas</h4><span class="text-[9px] bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">Multi-page</span></div><p class="text-[11px] text-green-200/40">Profil sekolah, berita kegiatan, daftar guru, serta etalase karya</p></div></div>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-green-400/40 transition-transform duration-300" id="ia4"></i>
+                            </button>
+                            <div class="acc-c" id="a4"><div class="p-5 space-y-2 border-t border-green-500/10 text-xs text-green-200/60"><p><strong class="text-green-400">Marketplace Guru & Hub:</strong> Memetakan direktori nama pengajar, filter kategori rumpun mata pelajaran, hingga tombol integrasi langsung menuju pesan instan WhatsApp guru piket.</p></div></div>
+                        </div>
+                        <div class="materi-item glass rounded-2xl overflow-hidden" data-cat="web">
+                            <button onclick="tg('a5')" class="w-full flex items-center justify-between p-5 text-left hover:bg-green-500/5">
+                                <div class="flex items-center gap-3"><div class="text-lg">📄</div><div><div class="flex items-center gap-2 flex-wrap"><h4 class="text-sm font-semibold">Pameran Digital / Proyek Kelas</h4><span class="text-[9px] bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">Digital Humanities</span></div><p class="text-[11px] text-green-200/40">Katalog karya esai siswa, galeri infografis, dan dokumentasi arsip</p></div></div>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-green-400/40 transition-transform duration-300" id="ia5"></i>
+                            </button>
+                            <div class="acc-c" id="a5"><div class="p-5 space-y-2 border-t border-green-500/10 text-xs text-green-200/60"><p><strong class="text-green-400">Inspirasi:</strong> Manajemen penyimpanan dokumen portofolio kreasi orisinal siswa per angkatan untuk meningkatkan transparansi mutu akademis sekolah.</p></div></div>
+                        </div>
+                        <div class="materi-item glass rounded-2xl overflow-hidden" data-cat="web">
+                            <button onclick="tg('a6')" class="w-full flex items-center justify-between p-5 text-left hover:bg-green-500/5">
+                                <div class="flex items-center gap-3"><div class="text-lg">📹</div><div><div class="flex items-center gap-2 flex-wrap"><h4 class="text-sm font-semibold">Web Video Pembelajaran</h4><span class="text-[9px] bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">YouTube Embed</span></div><p class="text-[11px] text-green-200/40">Katalog materi audio visual interaktif dari saluran YouTube sekolah</p></div></div>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-green-400/40 transition-transform duration-300" id="ia6"></i>
+                            </button>
+                            <div class="acc-c" id="a6"><div class="p-5 space-y-2 border-t border-green-500/10 text-xs text-green-200/60"><p><strong class="text-green-400">Arsitektur Ringan:</strong> Rekam video pembelajaran harian, upload sebagai status Unlisted di YouTube, lalu panggil ID-nya lewat kode website agar streaming super cepat, gratis, dan bebas kuota hosting.</p></div></div>
+                        </div>
+                        <div class="materi-item glass rounded-2xl overflow-hidden" data-cat="perangkat">
+                            <button onclick="tg('a7')" class="w-full flex items-center justify-between p-5 text-left hover:bg-green-500/5">
+                                <div class="flex items-center gap-3"><div class="text-lg">📋</div><div><div class="flex items-center gap-2 flex-wrap"><h4 class="text-sm font-semibold">Perencanaan: Prota, Promes, RPP</h4><span class="text-[9px] bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded-full">Gemini API</span></div><p class="text-[11px] text-green-200/40">Penyusunan instrumen Program Tahunan dan RPP otomatis via AI</p></div></div>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-green-400/40 transition-transform duration-300" id="ia7"></i>
+                            </button>
+                            <div class="acc-c" id="a7"><div class="p-5 space-y-4 border-t border-green-500/10 text-xs"><p class="text-green-200/60"><strong class="text-orange-400">AI-Powered Engine:</strong> Guru menginput parameter mata pelajaran, tingkatan kelas, dan capaian semester → Sistem mengirim prompt ke Gemini API untuk menyusun draf RPP 1 lembar tanpa ketik dari nol.</p><a href="#" class="inline-flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg text-xs font-semibold glow-orange">Mulai Pendampingan Perencanaan →</a></div></div>
+                        </div>
+                        <div class="materi-item glass rounded-2xl overflow-hidden" data-cat="perangkat">
+                            <button onclick="tg('a8')" class="w-full flex items-center justify-between p-5 text-left hover:bg-green-500/5">
+                                <div class="flex items-center gap-3"><div class="text-lg">📖</div><div><div class="flex items-center gap-2 flex-wrap"><h4 class="text-sm font-semibold">Sumber Belajar: Modul & LKPD</h4><span class="text-[9px] bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded-full">Gemini API</span></div><p class="text-[11px] text-green-200/40">Pembuatan Lembar Kerja Peserta Didik digital menggunakan AI</p></div></div>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-green-400/40 transition-transform duration-300" id="ia8"></i>
+                            </button>
+                            <div class="acc-c" id="a8"><div class="p-5 space-y-2 border-t border-green-500/10 text-xs text-green-200/60"><p><strong class="text-orange-400">Sistem LKPD Pintar:</strong> Guru memasukkan Kompetensi Dasar (KD). AI otomatis menyusun soal studi kasus pemecahan masalah beserta rangkuman lembar materi penunjangnya.</p></div></div>
+                        </div>
+                        <div class="materi-item glass rounded-2xl overflow-hidden" data-cat="perangkat">
+                            <button onclick="tg('a9')" class="w-full flex items-center justify-between p-5 text-left hover:bg-green-500/5">
+                                <div class="flex items-center gap-3"><div class="text-lg">🎯</div><div><div class="flex items-center gap-2 flex-wrap"><h4 class="text-sm font-semibold">Asesmen: Soal Generator & Jurnal</h4><span class="text-[9px] bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded-full">Gemini API</span></div><p class="text-[11px] text-green-200/40">Penyusunan bank soal otomatis dan pengelolaan jurnal mengajar digital</p></div></div>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-green-400/40 transition-transform duration-300" id="ia9"></i>
+                            </button>
+                            <div class="acc-c" id="a9"><div class="p-5 space-y-2 border-t border-green-500/10 text-xs text-green-200/60"><p><strong class="text-orange-400">Bank Soal Otomatis:</strong> Generator otomatis merancang 10-20 variasi soal pilihan ganda lengkap dengan rubrik penilaiannya, tersinkronisasi rapi ke basis data internal.</p></div></div>
+                        </div>
+                        <div class="materi-item glass rounded-2xl overflow-hidden" data-cat="ai">
+                            <button onclick="tg('a10')" class="w-full flex items-center justify-between p-5 text-left hover:bg-green-500/5">
+                                <div class="flex items-center gap-3"><div class="text-lg">🤖</div><div><div class="flex items-center gap-2 flex-wrap"><h4 class="text-sm font-semibold">AI Chatbot Edukasi</h4><span class="text-[9px] bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded-full">Gemini API</span></div><p class="text-[11px] text-green-200/40">Asisten virtual interaktif untuk melayani tanya jawab siswa 24/7</p></div></div>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-green-400/40 transition-transform duration-300" id="ia10"></i>
+                            </button>
+                            <div class="acc-c" id="a10"><div class="p-5 space-y-2 border-t border-green-500/10 text-xs text-green-200/60"><p><strong class="text-purple-400">Konsep Mandiri:</strong> Penanaman konteks kurikulum spesifik via System Prompt. Murid bisa berkonsultasi seputar rumus fisika, materi sejarah, atau kisi-kisi ulasan materi kapan saja secara mandiri.</p></div></div>
+                        </div>
+                        <div class="materi-item glass rounded-2xl overflow-hidden" data-cat="ai">
+                            <button onclick="tg('a11')" class="w-full flex items-center justify-between p-5 text-left hover:bg-green-500/5">
+                                <div class="flex items-center gap-3"><div class="text-lg">🇬🇧</div><div><div class="flex items-center gap-2 flex-wrap"><h4 class="text-sm font-semibold">Mapel Interaktif: Bahasa Inggris</h4><span class="text-[9px] bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded-full">Listening + Vocab</span></div><p class="text-[11px] text-green-200/40">Portal materi ajar listening practice dan kuis tata bahasa terintegrasi</p></div></div>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-green-400/40 transition-transform duration-300" id="ia11"></i>
+                            </button>
+                            <div class="acc-c" id="a11"><div class="p-5 space-y-2 border-t border-green-500/10 text-xs text-green-200/60"><p><strong class="text-purple-400">Fitur Laboratorium Bahasa Digital:</strong> Integrasi video percakapan native speaker, modul tes kosa kata interaktif, hingga evaluasi struktur kalimat berbasis aplikasi web Jamstack.</p></div></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
 
     </main>
 
     <footer class="bg-[#030704] border-t border-emerald-950/40 py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center border-b border-emerald-950/20 pb-8 mb-8">
-                <div>
-                    <span class="text-lg font-bold text-white">Adjarin <span class="text-emerald-400">Kreatif</span> Semesta</span>
-                    <p class="text-slate-400 text-xs mt-1">Terdaftar di OSS RBA — Aktivitas Pengembangan Teknologi Kecerdasan Buatan (Artificial Intelligence).</p>
-                </div>
-                <div class="flex items-center justify-start md:justify-center space-x-6">
-                    <a href="#" class="text-slate-400 hover:text-emerald-400 transition-colors text-lg"><i class="fa-brands fa-linkedin"></i></a>
-                    <a href="#" class="text-slate-400 hover:text-emerald-400 transition-colors text-lg"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#" class="text-slate-400 hover:text-emerald-400 transition-colors text-lg"><i class="fa-brands fa-youtube"></i></a>
-                </div>
-                <div class="text-left md:text-right">
-                    <a id="footer-penerbit-link" href="#" target="_blank" class="text-xs font-medium text-slate-400 hover:text-amber-400 transition-colors">
-                        Mitra Penerbit Resmi: jpcreative.web.id
-                    </a>
-                </div>
-            </div>
-            <div class="flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500 gap-4">
-                <p>&copy; 2026 Adjarin Kreatif Semesta di bawah lisesnis PT jepe Kreatif Semesta. All Rights Reserved. Regulasi KBLI Sesuai Ketentuan Hukum.</p>
-                <p>Designed by Full-stack Jamstack Architecture.</p>
-            </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500">
+            <p>&copy; 2026 PT Adjarin Kreatif Semesta. All Rights Reserved. KBLI 62015.</p>
+            <a id="footer-penerbit-link" href="#" target="_blank" class="hover:text-amber-400">Mitra Resmi: jpcreative.web.id</a>
         </div>
     </footer>
 
     <div class="fixed bottom-6 right-6 z-50">
-        <a id="sticky-wa-bubble" href="#" target="_blank" class="w-14 h-14 bg-brand-wa text-neutral-950 rounded-full flex items-center justify-center shadow-2xl hover:scale-105 transition-transform relative group">
-            <i class="fa-brands fa-whatsapp text-3xl"></i>
-            <div class="absolute right-16 bottom-2 bg-neutral-950 border border-emerald-800 text-white text-xs px-3 py-2 rounded-xl whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none hidden sm:block">
-                <span class="font-bold text-emerald-400">Hubungi Admin (Abi love)</span><br>Respons Cepat Konsultasi & Kemitraan
-            </div>
-        </a>
+        <a id="sticky-wa-bubble" href="#" target="_blank" class="w-14 h-14 bg-brand-wa text-neutral-950 rounded-full flex items-center justify-center shadow-2xl hover:scale-105 transition-transform"><i class="fa-brands fa-whatsapp text-3xl"></i></a>
     </div>
 
     <script>
-        // Init Native Static Configuration Links dari Link_Config Object
+        // Init Konfigurasi Tautan Global
         document.getElementById('nav-cta-btn').href = LINK_CONFIG.joinNowCTA;
-        document.getElementById('mobile-nav-cta-btn').href = LINK_CONFIG.joinNowCTA;
         document.getElementById('hero-cta-primary').href = LINK_CONFIG.joinNowCTA;
-        document.getElementById('hero-cta-secondary').href = "#produk-saas";
         document.getElementById('penerbit-link').href = LINK_CONFIG.penerbitEksternal;
         document.getElementById('footer-penerbit-link').href = LINK_CONFIG.penerbitEksternal;
         document.getElementById('contact-email').textContent = LINK_CONFIG.companyEmail;
-        document.getElementById('sticky-wa-bubble').href = `https://wa.me/${LINK_CONFIG.whatsappNumber}?text=Halo%20Admin%20Adjarin%20Kreatif%20Semesta,%20saya%20ingin%20berkonsultasi%20mengenai%20layanan%20Bimtek%20dan%20Pendampingan%20Web.`;
+        document.getElementById('sticky-wa-bubble').href = `https://wa.me/${LINK_CONFIG.whatsappNumber}`;
 
-        document.getElementById('demo-link-1').href = LINK_CONFIG.demoAppEvaluasi;
-        document.getElementById('demo-link-2').href = LINK_CONFIG.demoAbsensiDigital;
-        document.getElementById('demo-link-3').href = LINK_CONFIG.demoDashboardKelola;
-        document.getElementById('demo-link-1-dup').href = LINK_CONFIG.demoAppEvaluasi;
-        document.getElementById('demo-link-2-dup').href = LINK_CONFIG.demoAbsensiDigital;
-        document.getElementById('demo-link-3-dup').href = LINK_CONFIG.demoDashboardKelola;
-
-        // Mobile Menu Toggle Action
-        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-        const mobileMenu = document.getElementById('mobile-menu');
-        
-        mobileMenuToggle.addEventListener('click', () => {
-            toggleMobileMenu();
-        });
-
-        function toggleMobileMenu() {
-            mobileMenu.classList.toggle('hidden');
+        // Set gallery sheet link
+        const gallerySheetLink = document.getElementById('gallery-sheet-link');
+        if (gallerySheetLink && GOOGLE_SHEET_ID !== "1XYZ-YOUR-SHEET-ID-HERE") {
+            gallerySheetLink.href = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/edit`;
         }
 
-        // WhatsApp Form Sender Action Function
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuToggle.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); });
+        function toggleMobileMenu() { mobileMenu.classList.add('hidden'); }
+
         function sendWhatsAppMessage(event) {
             event.preventDefault();
             const name = document.getElementById('form-name').value;
             const service = document.getElementById('form-service').value;
             const msg = document.getElementById('form-message').value;
-            
-            const encodedText = encodeURIComponent(`Halo Admin Adjarin Kreatif Semesta,\n\nSaya: ${name}\nLayanan Pendampingan: ${service}\nKebutuhan Tambahan: ${msg}`);
-            const waUrl = `https://wa.me/${LINK_CONFIG.whatsappNumber}?text=${encodedText}`;
-            window.open(waUrl, '_blank');
+            window.open(`https://wa.me/${LINK_CONFIG.whatsappNumber}?text=${encodeURIComponent(`Halo Admin,\nNama: ${name}\nLayanan: ${service}\nPesan: ${msg}`)}`, '_blank');
         }
 
-        // ROUTER SYSTEM FOR DYNAMIC VIEW (GOOGLESHEETS BACKEND ENGINE)
+        // CONTROL VIEW ROUTING SYSTEM
         function openMenuPage(menuSlug) {
-            // Ubah visibility layout dari landing page ke artikel detail
             document.getElementById('landing-page-view').classList.add('hidden');
+            document.getElementById('materi-guru-view').classList.add('hidden');
             document.getElementById('dynamic-content-view').classList.remove('hidden');
-            
-            // Scroll ke posisi paling atas secara halus
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            
-            // Trigger Sync Fetch dari API Google Sheets
             fetchDataFromSheets(menuSlug);
         }
 
-        function closeMenuPage() {
+        function closeAllViews() {
             document.getElementById('dynamic-content-view').classList.add('hidden');
+            document.getElementById('materi-guru-view').classList.add('hidden');
             document.getElementById('landing-page-view').classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // FETCH SPREADSHEETS VIA ALLORIGINS RAW CORS PROXY
+        function switchToMateriGuruView() {
+            document.getElementById('landing-page-view').classList.add('hidden');
+            document.getElementById('dynamic-content-view').classList.add('hidden');
+            document.getElementById('materi-guru-view').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        // FETCH GOOGLE SHEETS CORE ENGINE
         async function fetchDataFromSheets(slug) {
             const loadingState = document.getElementById('dynamic-loading-state');
             const articleEl = document.getElementById('dynamic-article');
+            const ctaBtnBox = document.getElementById('cta-pelajari-lebih-lanjut');
             
             loadingState.classList.remove('hidden');
             articleEl.classList.add('hidden');
+            if (ctaBtnBox) ctaBtnBox.classList.add('hidden');
 
             const spreadSheetUrl = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:json`;
             const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(spreadSheetUrl)}`;
 
             try {
                 const response = await fetch(proxyUrl);
-                if (!response.ok) throw new Error('Gagal memuat data dari AllOrigins Proxy');
-                
                 const rawText = await response.text();
-                // Google Sheets JSON Response mengembalikan format gugus teks, kita bersihkan agar valid objek JSON
                 const jsonCleaned = JSON.parse(rawText.substring(47, rawText.length - 2));
-                
                 const rows = jsonCleaned.table.rows;
                 
-                // Representasi Struktur Pemetaan Kolom di Spreadsheets Anda:
-                // Kolom A (index 0) = slug (contoh isi: 'produk-digital' atau 'bimtek')
-                // Kolom B (index 1) = judul_halaman (teks)
-                // Kolom C (index 2) = nama_file_gambar (contoh isi: 'guru.png' atau 'web-sekolah.jpg')
-                // Kolom D (index 3) = konten_artikel_html (teks / struktur paragraf HTML lengkap)
-                
                 let matchedRow = null;
-                
                 for (let row of rows) {
-                    if(row.c && row.c[0] && row.c[0].v === slug) {
-                        matchedRow = row;
-                        break;
-                    }
+                    if(row.c && row.c[0] && row.c[0].v === slug) { matchedRow = row; break; }
                 }
 
                 if (matchedRow) {
-                    const pageTitle = matchedRow.c[1] ? matchedRow.c[1].v : "Halaman Edukasi";
-                    const imgFileName = matchedRow.c[2] ? matchedRow.c[2].v : "";
-                    const htmlBodyContent = matchedRow.c[3] ? matchedRow.c[3].v : "<p>Konten artikel belum diinput oleh admin di Dashboard Spreadsheets.</p>";
+                    document.getElementById('dynamic-article-title').textContent = matchedRow.c[1] ? matchedRow.c[1].v : "Halaman Edukasi";
+                    document.getElementById('dynamic-article-body').innerHTML = matchedRow.c[3] ? matchedRow.c[3].v : "";
+                    document.getElementById('dynamic-article-image').src = matchedRow.c[2] ? `${GITHUB_IMAGE_BASE}${matchedRow.c[2].v}` : "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80";
                     
-                    // Render elemen UI teks ke halaman
-                    document.getElementById('dynamic-article-title').textContent = pageTitle;
-                    document.getElementById('dynamic-article-body').innerHTML = htmlBodyContent;
-                    
-                    // Logika Otomatisasi URL Gambar Fisik dari GitHub Assets
-                    const finalImgUrl = imgFileName ? `${GITHUB_IMAGE_BASE}${imgFileName}` : "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80";
-                    document.getElementById('dynamic-article-image').src = finalImgUrl;
-                } else {
-                    // Fallback lokal jika baris data di spreadsheet belum terbuat
-                    renderFallbackContent(slug);
+                    if (slug === 'bimtek' && ctaBtnBox) {
+                        ctaBtnBox.classList.remove('hidden');
+                    }
                 }
             } catch (error) {
-                console.error("Spreadsheet integration log error:", error);
-                // Degradasi fungsional ke data fallback statis lokal agar tidak blank/rusak
-                renderFallbackContent(slug);
+                console.error("Error fetching sheet data:", error);
+                document.getElementById('dynamic-article-title').textContent = slug === 'bimtek' ? "Bimtek Guru & Workshop Literasi AI" : "Halaman Detail";
+                document.getElementById('dynamic-article-body').innerHTML = "<p>Gagal memuat data live dari Google Sheets. Gunakan tombol di bawah ini untuk melihat kurikulum pendampingan.</p>";
+                document.getElementById('dynamic-article-image').src = "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80";
+                if (slug === 'bimtek' && ctaBtnBox) ctaBtnBox.classList.remove('hidden');
             } finally {
                 loadingState.classList.add('hidden');
                 articleEl.classList.remove('hidden');
             }
         }
 
-        // FUNGSI DEGRADASI LOKAL (Jika Google Sheet ID salah/offline, tampilan tetap anggun)
-        function renderFallbackContent(slug) {
-            const titleEl = document.getElementById('dynamic-article-title');
-            const bodyEl = document.getElementById('dynamic-article-body');
-            const imgEl = document.getElementById('dynamic-article-image');
-
-            if(slug === 'produk-digital') {
-                titleEl.textContent = "Ekosistem Produk Digital Pendampingan";
-                imgEl.src = "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80";
-                bodyEl.innerHTML = `
-                    <p>Halaman ini menampilkan dokumentasi serta rincian portofolio digital yang dikembangkan dalam kerangka KBLI 62015. Seluruh arsitektur front-end dikonstruksikan menggunakan framework Jamstack modern.</p>
-                    <p>Melalui skema Pendampingan Pembuatan Web, institusi Anda akan dipandu secara bertahap mulai dari konfigurasi domain, optimalisasi DNS Cloudflare, hingga pemanfaatan Google Sheets API sebagai basis data back-end yang efisien, aman, dan tanpa biaya operasional database bulanan.</p>
-                    <p><em>Catatan Kontrol: Teks ini merupakan fallback sistem internal. Untuk menjadikannya dinamis sesuai keinginan Anda, silakan masukkan baris baru dengan pengenal slug 'produk-digital' pada dashboard admin Google Sheets Anda.</em></p>
-                `;
-            } else if(slug === 'bimtek') {
-                titleEl.textContent = "Bimtek Guru & Workshop Literasi AI";
-                imgEl.src = "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80";
-                bodyEl.innerHTML = `
-                    <p>Program Bimtek Guru di Adjarin Kreatif Semesta dirancang khusus sebagai solusi alternatif yang akseleratif dalam meningkatkan indeks literasi teknologi di lingkungan pendidik tanpa melanggar batas tata hukum regulasi korporasi.</p>
-                    <p>Fokus utama pendampingan mencakup implementasi prompt engineering tingkat lanjut, integrasi media ajar berbasis kecerdasan buatan, hingga teknik otomatisasi pembuatan administrasi nilai memanfaatkan Google Apps Script (GAS) secara praktis.</p>
-                    <p><em>Catatan Kontrol: Teks ini merupakan fallback sistem internal. Untuk menjadikannya dinamis sesuai keinginan Anda, silakan masukkan baris baru dengan pengenal slug 'bimtek' pada dashboard admin Google Sheets Anda.</em></p>
-                `;
-            }
+        // LUCIDE & ACCORDION NATIVE HANDLERS
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+        function tg(id){
+            const el = document.getElementById(id);
+            const icon = document.getElementById('i'+id);
+            const isOpen = el.classList.contains('open');
+            el.classList.toggle('open');
+            if(icon) icon.style.transform = isOpen ? '' : 'rotate(180deg)';
         }
+        function cp(btn){
+            const text = btn.closest('.code-block').querySelector('pre code').innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                btn.innerHTML = '✓ Tersalin!';
+                const t = document.getElementById('toast');
+                t.classList.add('show');
+                setTimeout(() => { t.classList.remove('show'); btn.innerHTML = 'Salin'; }, 2000);
+            });
+        }
+        function filterCat(cat){
+            document.querySelectorAll('.cat-btn').forEach(b => b.className = 'cat-btn text-xs font-medium px-4 py-2 rounded-full bg-green-500/10 text-green-400 border border-green-500/20');
+            const activeBtn = document.getElementById('cat-'+cat);
+            if (activeBtn) activeBtn.className = 'cat-btn text-xs font-medium px-4 py-2 rounded-full bg-green-500 text-[#0a1628]';
+            document.querySelectorAll('.materi-item').forEach(item => {
+                item.style.display = (cat === 'all' || item.dataset.cat === cat) ? '' : 'none';
+            });
+        }
+
+        // Load gallery on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchGalleryFromSheets();
+        });
     </script>
 </body>
 </html>
